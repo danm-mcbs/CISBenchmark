@@ -2,23 +2,55 @@
 
 #>
 
-[CmdletBinding()]
+
+[CmdletBinding(SupportsShouldProcess=$True)]
 Param(
 
-    #region Default Variables
+    # The CIS Benchmark Level to Evaluate
+    [ValidateSet('L1','L2')]
     [string]
-    $Benchmark = 'VMware ESXi 7.0 v1.1.0'
-    #endregion
+    $Level = 'L1',
+
+    # Should the CIS Profile automatic remediations be applied
+    [switch]
+    $Remediate,
+    
+    # Which Benchmark scripts should run, this folder should exist
+    [string]
+    $Benchmark = 'VMware ESXi 7.0 v1.1.0',
+
+    # Which test to run
+    [string]
+    $Test = '*'
 )
 
 Begin {
-    
+
+    #region Validate vCenter Connection
+    if($Global:DefaultVIServer) {
+        Write-Verbose -Message ('Connected to {0} version {1}' -f $Global:DefaultVIServer.Name, $Global:DefaultVIServer.Version, $Global:DefaultVIServer.Build)
+    } else {
+        throw ('You must be connected to a vCenter Server or ESXi Host to run this script. Use Connect-VIServer to connect')
+    }
+    #endregion
+
 }
 
 Process {
 
+    #region Get and Cache common Objects required in scripts - to avoid re-running multiple Get-xxx API Calls
+
+    $VMHosts = @{}
+    Get-VMHost | Foreach-Object -Process {
+        $VMHosts[$_.Name] = [PSCustomObject]@{
+            VMHost = $_
+            EsxCli = $_ | Get-EsxCli -V2
+        }
+    }
+          
+    #endregion
+
     #region Loop through scripts in the $BenchmarkFolder
-    $Section = @{}
     $BenchmarkPath = ('{0}\{1}' -f (Split-Path -Path $MyInvocation.MyCommand.Path), $Benchmark)
     if(Test-Path -Path $BenchmarkPath) {
         Get-ChildItem -Path $BenchmarkPath -Filter '*.ps1' | ForEach-Object -Process {
@@ -27,6 +59,5 @@ Process {
     } else {
         throw ('Unable to find Benchmark [{0}] in {1}' -f $Benchmark, $BenchmarkPath)
     }
-    $Section.GetEnumerator() | Sort-Object -Property Key
     #endregion
 }
