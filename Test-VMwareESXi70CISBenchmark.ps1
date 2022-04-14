@@ -21,7 +21,11 @@ Param(
 
     # Which test to run
     [string]
-    $Test = '*'
+    $Test = '*',
+
+    # Which Host(s) to check
+    [string]
+    $VMHostName = '*'
 )
 
 Begin {
@@ -41,13 +45,19 @@ Process {
     #region Get and Cache common Objects required in scripts - to avoid re-running multiple Get-xxx API Calls
 
     $VMHosts = @{}
-    Get-VMHost | Foreach-Object -Process {
+    Get-VMHost -Name $VMHostName | Foreach-Object -Process {
         $VMHosts[$_.Name] = [PSCustomObject]@{
             VMHost = $_
             EsxCli = $_ | Get-EsxCli -V2
         }
     }
-          
+    
+    $VDSwitches = @{}
+    Get-VDSwitch | Foreach-Object -Process {
+        $VDSwitches[$_.Name] = [PSCustomObject]@{
+            VDSwitch = $_
+        }
+    }
     #endregion
 
     #region Loop through scripts in the $BenchmarkFolder
