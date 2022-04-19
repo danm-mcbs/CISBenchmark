@@ -58,6 +58,9 @@ Process {
             VDSwitch = $_
         }
     }
+
+    $VSwitches = Get-VirtualSwitch -Standard
+
     #endregion
 
     #region Loop through scripts in the $BenchmarkFolder
