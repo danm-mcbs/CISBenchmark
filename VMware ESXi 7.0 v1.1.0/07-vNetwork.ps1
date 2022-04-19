@@ -173,7 +173,7 @@ if('7.6' -like $Test) {
 
 #region 7.7 (L1) Ensure Virtual Distributed Switch Netflow traffic is sent to an authorized collector (Manual)
 
-if('7.7' -like $Test) {
+if('7.7' -like $Test -and $Global:DefaultVIServer.ProductLine -ne 'embeddedEsx') {
     foreach($VDSwitch in $VDSwitches.Keys) {
         $Value = $VDSwitches[$VDSwitch].VDSwitch.ExtensionData.Config.IpfixConfig.CollectorIpAddress
         $Pass = $null -ne $Value
@@ -196,8 +196,7 @@ if('7.7' -like $Test) {
 #endregion
 
 #region 7.8 (L1) Ensure port-level configuration overrides are disabled. (Automated)
-
-if('7.8' -like $Test) {
+if('7.8' -like $Test -and $Global:DefaultVIServer.ProductLine -ne 'embeddedEsx') {
     foreach($VDSwitch in $VDSwitches.Keys) {
         Get-VDPortgroup -VDSwitch $VDSwitch | Get-VDPortgroupOverridePolicy | Foreach-Object -Process {
             $Value = ('Security Override: {0}; Vlan Override: {1}; Traffic Shaping Override: {2}; Uplink Teaming Override: {3}' -f $_.SecurityOverrideAllowed, $_.VlanOverrideAllowed, $_.TrafficShapingOverrideAllowed, $_.UplinkTeamingOverrideAllowed)
