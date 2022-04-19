@@ -15,7 +15,7 @@ if('2.1' -like $Test) {
             Name = 'Ensure NTP time synchronization is configured properly (Automated)'
             Level = 1
             Item = $VMHost
-            Value = $Value
+            Value = $Value | Join-String -Separator ', '
             Pass = $Pass
             Remediated = $false
         }
@@ -49,7 +49,7 @@ if('2.2' -like $Test) {
             Name = 'Ensure the ESXi host firewall is configured to restrict access to services running on the host (Automated)'
             Level = 1
             Item = $VMHost
-            Value = $Value
+            Value = $Value | ConvertTo-Json
             Pass = $Pass
             Remediated = $false
         }
@@ -81,7 +81,7 @@ if('2.3' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Disable MOB')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Config.HostAgent.plugins.solo.enableMob | Set-AdvancedSetting -Value $false
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Config.HostAgent.plugins.solo.enableMob | Set-AdvancedSetting -Value $false
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to Disable MOB on host {0}' -f $VMHost)
@@ -168,7 +168,7 @@ if('2.6' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Disable DVFilterBindIpAddress')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Net.DVFilterBindIpAddress | Set-AdvancedSetting -Value ""
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Net.DVFilterBindIpAddress | Set-AdvancedSetting -Value ""
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to Disable DVFilterBindIpAddress on host {0}' -f $VMHost)
@@ -193,7 +193,7 @@ if('2.7' -like $Test) {
             Name = 'Ensure expired and revoked SSL certificates are removed from the ESXi server (Manual)'
             Level = 1
             Item = $VMHost
-            Value = ('Enabled: {0}' -f $Value.enable)
+            Value = $Value
             Pass = $Pass
             Remediated = $false
         }
@@ -228,7 +228,7 @@ if('2.8' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Disable DVFilterBindIpAddress')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Net.DVFilterBindIpAddress | Set-AdvancedSetting -Value ""
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Net.DVFilterBindIpAddress | Set-AdvancedSetting -Value ""
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to Disable DVFilterBindIpAddress on host {0}' -f $VMHost)

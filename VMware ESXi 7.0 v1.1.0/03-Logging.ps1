@@ -31,7 +31,7 @@ if('3.2' -like $Test) {
     foreach($VMHost in $VMHosts.Keys) {
 
         $Value = $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Syslog.global.logDir
-        $Pass = $null -ne $Value.Value -and $Value.Value -ne ''
+        $Pass = $null -ne $Value.Value -and $Value.Value -ne '' -and $Value.Value -ne '[] /scratch/log'
         $CurrentTest = [PSCustomObject]@{
             Test = '3.2'
             Section = $CurrentSection.Name

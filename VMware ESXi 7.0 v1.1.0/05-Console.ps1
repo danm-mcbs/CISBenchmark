@@ -23,7 +23,7 @@ if('5.1' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set DCUI timeout to 600 seconds')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name UserVars.DcuiTimeOut | Set-AdvancedSetting -Value 600
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name UserVars.DcuiTimeOut | Set-AdvancedSetting -Value 600
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to set DCUI timeout to 600 seconds on host {0}' -f $VMHost)
@@ -251,7 +251,7 @@ if('5.8' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set ESXi shell & SSH idle timeout to 300 seconds')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name UserVars.ESXiShellInteractiveTimeOut | Set-AdvancedSetting -Value 300
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name UserVars.ESXiShellInteractiveTimeOut | Set-AdvancedSetting -Value 300
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to set ESXi shell & SSH idle timeout to 300 seconds on host {0}' -f $VMHost)
@@ -283,7 +283,7 @@ if('5.9' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set shell services timeout to 1 hour')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name UserVars.ESXiShellTimeOut | Set-AdvancedSetting -Value 3600
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name UserVars.ESXiShellTimeOut | Set-AdvancedSetting -Value 3600
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to set shell services timeout to 1 hour on host {0}' -f $VMHost)

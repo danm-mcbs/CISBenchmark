@@ -80,7 +80,7 @@ if('1.3' -like $Test) {
             Name = 'Ensure no unauthorized kernel modules are loaded on the host (Manual)'
             Level = 1
             Item = $VMHost
-            Value = $Value
+            Value = $Value | Join-String -Separator ', '
             Pass = $null
             Remediated = $false
         }

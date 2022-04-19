@@ -36,7 +36,7 @@ if('4.1' -like $Test) {
 if('4.2' -like $Test) {
     foreach($VMHost in $VMHosts.Keys) {
         $Value = $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Security.PasswordQualityControl
-        $v -match 'min=(disabled|[0-9]+),(disabled|[0-9]+),(disabled|[0-9]+),(disabled|[0-9]+),(?<length>disabled|[0-9]+)' | Out-Null
+        $Value -match 'min=(disabled|[0-9]+),(disabled|[0-9]+),(disabled|[0-9]+),(disabled|[0-9]+),(?<length>disabled|[0-9]+)' | Out-Null
         [int]$passwdLength = 0
         [int]::TryParse($Matches.length,[ref]$passwdLength) | Out-Null
         $Pass = $Value.Value -match 'retry=[1-5]' -and $Matches.length -ne 'disabled' -and [int]$passwdLength -ge 14
@@ -53,10 +53,10 @@ if('4.2' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set Password Complexity')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Security.PasswordQualityControl | Set-AdvancedSetting -Value 'retry=3 min=disabled,disabled,disabled,disabled,14'
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Security.PasswordQualityControl | Set-AdvancedSetting -Value 'retry=3 min=disabled,disabled,disabled,disabled,14'
                 $CurrentTest.Remediated = $true    
             } catch {
-                Write-Warning -Message ('Unable to set Password Complexity on host {0}' -f $VMHost)
+                Write-Warning -Message ('Unable to set Password Complexity on host {0}: {1}' -f $VMHost, $_.Exception.Message)
             }
         }
         $CurrentTest
@@ -84,7 +84,7 @@ if('4.3' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set Maximum failed login attempts to 5')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Security.AccountLockFailures | Set-AdvancedSetting -Value 5
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Security.AccountLockFailures | Set-AdvancedSetting -Value 5
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to set maximum failed login attempts to 5 on host {0}' -f $VMHost)
@@ -115,7 +115,7 @@ if('4.4' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set account lockout is set to 15 minutes')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Security.AccountUnlockTime | Set-AdvancedSetting -Value 900
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Security.AccountUnlockTime | Set-AdvancedSetting -Value 900
                 $CurrentTest.Remediated = $true    
             } catch {
                 Write-Warning -Message ('Unable to set account lockout to 15 minutes on host {0}' -f $VMHost)
@@ -146,10 +146,10 @@ if('4.5' -like $Test) {
 
         if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Set password history to 5')) {
             try {
-                $VMHosts[$VMHost].VMHost | Get-AdvangedSetting -Name Security.PasswordHistory | Set-AdvancedSetting -Value 5
+                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Security.PasswordHistory | Set-AdvancedSetting -Value 5
                 $CurrentTest.Remediated = $true    
             } catch {
-                Write-Warning -Message ('Unable to set account password history to 5 on host {0}' -f $VMHost)
+                Write-Warning -Message ('Unable to set account password history to 5 on host {0}: {1}' -f $VMHost, $_.Exception.Message)
             }
         }
         $CurrentTest
