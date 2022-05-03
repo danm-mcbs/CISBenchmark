@@ -24,8 +24,12 @@ Param(
     $Test = '*',
 
     # Which Host(s) to check
-    [string]
-    $VMHostName = '*'
+    [string[]]
+    $VMHostName = @('*'), 
+
+    # Which Cluster(s) to check
+    [string[]]
+    $ClusterName = @('*')
 )
 
 Begin {
@@ -45,7 +49,12 @@ Process {
     #region Get and Cache common Objects required in scripts - to avoid re-running multiple Get-xxx API Calls
 
     $VMHosts = @{}
-    Get-VMHost -Name $VMHostName | Foreach-Object -Process {
+    if($global:DefaultVIServer.ProductLine -eq 'vpx') {
+        $VMHostList = Get-Cluster -Name $ClusterName | Get-VMHost -Name $VMHostName
+    } else {
+        $VMHostList = Get-VMHost -Name $VMHostName
+    }
+    $VMHostList | Foreach-Object -Process {
         $VMHosts[$_.Name] = [PSCustomObject]@{
             VMHost = $_
             EsxCli = $_ | Get-EsxCli -V2

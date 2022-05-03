@@ -226,14 +226,6 @@ if('2.8' -like $Test) {
             Remediated = $false
         }
 
-        if($false -eq $Pass -and $true -eq $Remediate -and $PSCmdlet.ShouldProcess($VMHost,'Disable DVFilterBindIpAddress')) {
-            try {
-                $VMHosts[$VMHost].VMHost | Get-AdvancedSetting -Name Net.DVFilterBindIpAddress | Set-AdvancedSetting -Value ""
-                $CurrentTest.Remediated = $true    
-            } catch {
-                Write-Warning -Message ('Unable to Disable DVFilterBindIpAddress on host {0}' -f $VMHost)
-            }
-        }
         $CurrentTest
 
     }
