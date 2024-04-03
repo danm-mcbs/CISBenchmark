@@ -62,13 +62,13 @@ Process {
     }
     
     $VDSwitches = @{}
-    Get-VDSwitch | Foreach-Object -Process {
+    Get-VDSwitch -VMHost $VMHostList | Foreach-Object -Process {
         $VDSwitches[$_.Name] = [PSCustomObject]@{
             VDSwitch = $_
         }
     }
 
-    $VSwitches = Get-VirtualSwitch -Standard
+    $VSwitches = Get-VirtualSwitch -Standard -VMHost $VMHostList
 
     #endregion
 

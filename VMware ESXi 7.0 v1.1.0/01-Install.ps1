@@ -63,6 +63,7 @@ if('1.2' -like $Test) {
 if('1.3' -like $Test) {
     foreach($VMHost in $VMHosts.Keys) {
         $Value = $VMHosts[$VMHost].EsxCli.system.module.list.Invoke() | ForEach-Object -Process {
+            $module = $_
             try {
                 if($null -ne $_.Name -and $_.Name -ne '') {
                     $VMHosts[$VMHost].EsxCli.system.module.get.Invoke(@{module=$_.Name}) | ForEach-Object -Process {
@@ -70,7 +71,7 @@ if('1.3' -like $Test) {
                     }
                 }
             } catch {
-                Write-Warning -Message ('Unable to get details for module [{0}] on host {1}' -f $_.Name, $VMHost)
+                Write-Warning -Message ('Unable to get details for module [{0}] on host {1}' -f $module.Name, $VMHost)
             }
         }
         $Pass = $null
