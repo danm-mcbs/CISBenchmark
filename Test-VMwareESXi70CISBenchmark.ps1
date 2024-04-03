@@ -1,5 +1,6 @@
 <#
-
+    .SYNOPSIS
+        Using the PowerCLI modules run a simple assessment against CIS standards
 #>
 
 
@@ -33,12 +34,24 @@ Param(
 )
 
 Begin {
+    #region Check for PowerShell version and VMware.PowerCLI Modules
+    if($PSVersionTable.PSVersion.Major -lt 7) {
+        Write-Error -Message 'This script requires PowerShell 7 or higher. Visit https://aka.ms/powershell for details about downloading and deploying.' -Category NotInstalled
+        exit 1
+    }
+
+    if($null -eq (Get-Module -Name VMware.PowerCLI -ListAvailable)) {
+        Write-Error -Message 'This script requires the VMware.PowerCLI module. Use `Install-Module -Name VMware.PowerCLI` to install this.' -Category NotInstalled
+        exit 1
+    }
+    #endregion
 
     #region Validate vCenter Connection
     if($Global:DefaultVIServer) {
         Write-Verbose -Message ('Connected to {0} version {1}' -f $Global:DefaultVIServer.Name, $Global:DefaultVIServer.Version, $Global:DefaultVIServer.Build)
     } else {
-        throw ('You must be connected to a vCenter Server or ESXi Host to run this script. Use Connect-VIServer to connect')
+        Write-Error -Message 'You must be connected to a vCenter Server or ESXi Host to run this script. Use Connect-VIServer to connect (see Get-Help -name Connect-VIServer for details).' -Category ConnectionError
+        exit 1
     }
     #endregion
 
@@ -79,7 +92,7 @@ Process {
             . $_
         }
     } else {
-        throw ('Unable to find Benchmark [{0}] in {1}' -f $Benchmark, $BenchmarkPath)
+        Write-Error -Message ('Unable to find Benchmark [{0}] in {1}' -f $Benchmark, $BenchmarkPath) -Category ObjectNotFound
     }
     #endregion
 }
